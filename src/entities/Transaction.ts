@@ -3,7 +3,7 @@ import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 import { RuleSet } from "./RuleSet";
 
 @Entity("transaction")
-@Unique(['transactionId'])
+@Unique(["transactionId"])
 export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;

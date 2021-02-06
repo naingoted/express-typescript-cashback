@@ -8,11 +8,8 @@
     "start": "ts-node src/index.ts",
     "clean": "rimraf dist",
     "build": "tsc -v && npm run clean && npm run tslint && npm run build-ts",
-    "build-ts": "tsc",
-    "watch": "NODE_ENV=development nodemon --exec ts-node src/index.ts",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "tslint:fix": "tslint --fix src/**/*.{ts,js}",
-    "test": "NODE_ENV=test mocha -r ts-node/register src/tests/*.spec.ts  --exit --timeout 100000000",
     "typeorm": "ts-node -r tsconfig-paths/register ./node_modules/typeorm/cli.js"
   },
   "author": "Fuego",

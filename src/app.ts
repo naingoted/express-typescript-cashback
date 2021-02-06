@@ -2,7 +2,7 @@ import "reflect-metadata";
 import bodyParser from "body-parser";
 import cors from "cors";
 import swaggerUi from "swagger-ui-express";
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 
 import helmet from "helmet";
 import morgan from "morgan";
@@ -66,13 +66,7 @@ export class Application {
   }
 
   startServer = (): Promise<boolean> => {
-    // process.on('unhandledRejection', err => {
-    //   console.log('UNHANDLED REJECTION! 💥 Shutting down...');
-    //   console.log(err.name, err.message);
-    //   // server.close(() => {
-    //     process.exit(1);
-    //   // });
-    // });
+
     return new Promise((resolve, reject) => {
       this.app
         .listen(+this.config.port, this.config.host, () => {

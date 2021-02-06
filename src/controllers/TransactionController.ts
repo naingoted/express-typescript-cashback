@@ -1,7 +1,5 @@
-import { TransactionRoutes } from "./../routes/TransactionRoutes";
 import { Request, Response, NextFunction } from "express";
 import * as HttpStatus from "http-status-codes";
-import { isDate } from "class-validator";
 import asyncWrapper from "async-wrapper-express-ts";
 
 // Import Services
@@ -17,10 +15,6 @@ export class TransactionController {
       const transactionService = new TransactionService();
       const ruleSetService = new RuleSetService();
       let transaction = new Transaction();
-      // "date": "YYYY-mm-dd",
-      // "customerId": 1,
-      // "id": 1
-      // check if any ruleset applies
       if (!req.body.date) {
         next({ message: "date field is required" });
       }
@@ -36,7 +30,7 @@ export class TransactionController {
         // if transaction is valid
         // get highest ruleset.cashBack, get minTransaction
         const { cashBack, minTransactions, startDate, endDate, id } = ruleSet;
-        if (minTransactions == 1) {
+        if (minTransactions === 1) {
           // insert ruleset.cashBack -> transaction.cashback
           deducted = await ruleSetService.canRewardCashback(id);
           if (deducted) {

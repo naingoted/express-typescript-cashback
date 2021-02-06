@@ -1,5 +1,3 @@
-import { asyncWrapper } from 'async-wrapper-express-ts';
-import { RuleSet } from './../entities/RuleSet';
 import { getManager, Repository } from "typeorm";
 import { Logger, ILogger } from "../utils/logger";
 
@@ -41,16 +39,16 @@ export class RuleSetService {
     return Promise.reject(false);
   }
   /**
-   * 
+   *
    * can reward cashback
    */
-  async canRewardCashback(id: string | number ) : Promise<boolean> {
+  async canRewardCashback(id: string | number ): Promise<boolean> {
     const rule = await this.ruleSetRepository.findOne(id);
     if (
       rule.redemptionLimit > rule.redemption &&
       Number(rule.budget) > Number(rule.cashBack)
-    ) { return true }
-    return false
+    ) { return true; }
+    return false;
   }
   /**
    * update redemption limit
@@ -72,8 +70,6 @@ export class RuleSetService {
   /**
    * check valid transaction
    */
-  // SELECT WHERE '2021-03-09' >= startDate and '2021-03-09' <= endDate and cashback < budget and
-  // redemption < redemptionLimit;
   async isValidTransaction(date: Date): Promise<RuleSet | boolean> {
     if (date) {
       const query = await this.ruleSetRepository

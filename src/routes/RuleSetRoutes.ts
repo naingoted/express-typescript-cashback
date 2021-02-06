@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { RuleSetController } from "../controllers/RuleSetController";
-
+import { registerRuleSetValidations } from "../utils/Validator";
 export class RuleSetRoutes {
 
     router: Router;
@@ -11,6 +11,6 @@ export class RuleSetRoutes {
         this.routes();
     }
     routes() {
-        this.router.post("/", this.ruleSetController.registerRuleSet);
+        this.router.post("/", registerRuleSetValidations(), this.ruleSetController.registerRuleSet);
     }
 }
