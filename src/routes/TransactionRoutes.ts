@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { TransactionController } from "../controllers/TransactionController";
-
+import { registerTransactionValidationRules } from "../utils/Validator";
 export class TransactionRoutes {
 
     router: Router;
@@ -11,6 +11,6 @@ export class TransactionRoutes {
         this.routes();
     }
     routes() {
-        this.router.post("/", this.transactionController.registerTransaction);
+        this.router.post("/", registerTransactionValidationRules(), this.transactionController.registerTransaction);
     }
 }

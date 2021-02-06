@@ -63,7 +63,7 @@ export class Application {
     );
 
     await this.startServer();
-  };
+  }
 
   startServer = (): Promise<boolean> => {
     // process.on('unhandledRejection', err => {
@@ -83,5 +83,5 @@ export class Application {
         })
         .on("error", nodeErrorHandler);
     });
-  };
+  }
 }

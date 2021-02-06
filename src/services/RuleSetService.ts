@@ -1,3 +1,5 @@
+import { asyncWrapper } from 'async-wrapper-express-ts';
+import { RuleSet } from './../entities/RuleSet';
 import { getManager, Repository } from "typeorm";
 import { Logger, ILogger } from "../utils/logger";
 
@@ -14,13 +16,6 @@ export class RuleSetService {
   }
 
   /**
-   * Creates an instance of RuleSet.
-   */
-//   instantiate(data: Object): RuleSet | undefined {
-//     return this.ruleSetRepository.create(data);
-//   }
-
-  /**
    * Inserts a new RuleSet into the database.
    */
   async insert(data: RuleSet): Promise<RuleSet> {
@@ -33,7 +28,7 @@ export class RuleSetService {
    * Returns array of all users from db
    */
   async getAll(): Promise<RuleSet[]> {
-    return await this.ruleSetRepository.find({relations: ["transactions"]});
+    return await this.ruleSetRepository.find({ relations: ["transactions"] });
   }
 
   /**
@@ -46,36 +41,71 @@ export class RuleSetService {
     return Promise.reject(false);
   }
   /**
+   * 
+   * can reward cashback
+   */
+  async canRewardCashback(id: string | number ) : Promise<boolean> {
+    const rule = await this.ruleSetRepository.findOne(id);
+    if (
+      rule.redemptionLimit > rule.redemption &&
+      Number(rule.budget) > Number(rule.cashBack)
+    ) { return true }
+    return false
+  }
+  /**
    * update redemption limit
    */
-  async reduceRedemption(id: string | number): Promise<object> {
+  async rewardCashback(id: string | number): Promise<object> {
     if (id) {
-      let rule = await this.ruleSetRepository.findOne(id);
-      if (rule.redemptionLimit > 0) {
-            try {
-                return await this.ruleSetRepository.update(id,
-                { redemptionLimit : rule.redemptionLimit - 1});
-            } catch (error) {
-                return Promise.reject(error);
-            }
-      }
-
+        try {
+          const rule = await this.ruleSetRepository.findOne(id);
+          return await this.ruleSetRepository.update(id, {
+            redemption: rule.redemption + 1,
+            budget: Number(rule.budget) - Number(rule.cashBack),
+          });
+        } catch (error) {
+          return Promise.reject(error);
+        }
     }
     return Promise.reject(false);
   }
   /**
+   * check valid transaction
+   */
+  // SELECT WHERE '2021-03-09' >= startDate and '2021-03-09' <= endDate and cashback < budget and
+  // redemption < redemptionLimit;
+  async isValidTransaction(date: Date): Promise<RuleSet | boolean> {
+    if (date) {
+      const query = await this.ruleSetRepository
+        .createQueryBuilder("ruleset")
+        .andWhere("ruleset.startDate <= :date", { date: date })
+        .andWhere("ruleset.endDate >= :date", { date: date })
+        .andWhere("ruleset.budget > ruleset.cashBack")
+        .andWhere("ruleset.redemptionLimit > ruleset.redemption")
+        .orderBy({ "ruleset.cashBack": "DESC" })
+        .getOne();
+
+      if (query) {
+        return query;
+      } else {
+        return false;
+      }
+    } else {
+      return false;
+    }
+  }
+  /**
    * Updates the last failed logged date
    */
-//   async setLastFailedLoggedDate(RuleSet: RuleSet): Promise<object> {
-//     const userId: RuleSet = this.ruleSetRepository.getId(RuleSet);
+  //   async setLastFailedLoggedDate(RuleSet: RuleSet): Promise<object> {
+  //     const userId: RuleSet = this.ruleSetRepository.getId(RuleSet);
 
-//     try {
-//       return await this.ruleSetRepository.update(userId, {
-//         lastFailedLoggedDate: new Date()
-//       });
-//     } catch (error) {
-//       return Promise.reject(error);
-//     }
-//   }
-
+  //     try {
+  //       return await this.ruleSetRepository.update(userId, {
+  //         lastFailedLoggedDate: new Date()
+  //       });
+  //     } catch (error) {
+  //       return Promise.reject(error);
+  //     }
+  //   }
 }

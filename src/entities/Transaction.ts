@@ -1,18 +1,22 @@
-import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Unique } from "typeorm";
 
 import { RuleSet } from "./RuleSet";
 
 @Entity("transaction")
+@Unique(['transactionId'])
 export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
+  @Column({ nullable: false})
+  transactionId: number;
+
   @Column({ nullable: false, type: "date" })
   date: Date;
-  // this could have many to one relationship to Customer
-  @Column({ nullable: true, default: 0 })
+
+  @Column({ nullable: false, default: 0 })
   customerId: number;
 
-  @ManyToOne((type) => RuleSet, (ruleset) => ruleset.transactions)
-  ruleset: RuleSet;
+  @Column({ type: "decimal", precision: 5, scale: 2, default: 0 })
+  cashBack: number;
 }

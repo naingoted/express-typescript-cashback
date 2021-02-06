@@ -35,7 +35,7 @@ export default {
     password: process.env.ADMIN_PASSWORD || "admin",
     name: process.env.ADMIN_NAME || "admin",
     surname: process.env.ADMIN_SURNAME || "Application",
-    email: process.env.ADMIN_EMAIL || "thanhtutoo95atgmail.com"
+    email: process.env.ADMIN_EMAIL || "naingoted@gmail.com"
   },
   author: {
     login: parseInt(process.env.AUTHOR_LOGIN, 10) || 9922,

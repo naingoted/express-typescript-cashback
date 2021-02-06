@@ -1,7 +1,7 @@
+import { RuleSet } from "./../entities/RuleSet";
 import { Transaction } from "./../entities/Transaction";
 import { getManager, Repository } from "typeorm";
 import { Logger, ILogger } from "../utils/logger";
-
 export class TransactionService {
   transactionRepository: Repository<Transaction>;
   logger: ILogger;
@@ -24,9 +24,15 @@ export class TransactionService {
    * Returns array of all users from db
    */
   async getAll(): Promise<Transaction[]> {
-    return await this.transactionRepository.find({relations: ["ruleset"]});
+    return await this.transactionRepository.find();
   }
-
+  async getAllByCashBack(): Promise<Transaction[]> {
+    return await this.transactionRepository
+      .createQueryBuilder("transaction")
+      .select(["transaction.transactionId", "transaction.cashBack"])
+      .andWhere("transaction.cashBack <> 0")
+      .getMany();
+  }
   /**
    * Returns a Transaction by given id
    */
@@ -36,4 +42,39 @@ export class TransactionService {
     }
     return Promise.reject(false);
   }
+
+  /**
+   * returns Transaction(s) by CustomerID
+   */
+  async getValidTransForCashBack(
+    customerId: string | number,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Transaction[]> {
+    if (customerId && startDate && endDate) {
+      const query = await this.transactionRepository
+        .createQueryBuilder("transaction")
+        .andWhere("transaction.date >= :startDate", { startDate })
+        .andWhere("transaction.date <= :endDate", { endDate })
+        .andWhere("transaction.customerId = :customerId", { customerId })
+        .orderBy({ "transaction.id": "DESC" })
+        .getMany();
+      return query;
+    }
+    return Promise.reject(false);
+  }
+  /**
+   * update cashback for each transaction id (for updating all the older transactions)
+   */
+  // async updateTransCashBack(id: number, cashBack: number) : Promise<object> {
+  //   if (id) {
+  //     const transaction = await this.transactionRepository.findOne(id);
+  //     if(transaction.id){
+  //       try {
+  //         return await this.transactionRepository.find
+  //       }
+  //     }
+  //   }
+  //   return Promise.reject(false)
+  // }
 }

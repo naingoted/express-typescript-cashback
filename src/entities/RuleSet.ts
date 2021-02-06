@@ -1,8 +1,9 @@
-import { Column, Entity, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { Column, Entity, PrimaryGeneratedColumn, Index } from "typeorm";
 
 import { Transaction } from "./Transaction";
 
 @Entity("ruleset")
+@Index(["startDate", "endDate"])
 export class RuleSet {
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,12 +14,18 @@ export class RuleSet {
   @Column({ nullable: false, type: "date" })
   endDate: Date;
 
-  @Column()
+  @Column({ default: 0 })
   redemptionLimit: number;
+  // to keep track of redemptions
+  @Column({ default: 0 })
+  redemption: number;
 
   @Column({ type: "decimal", precision: 5, scale: 2, default: 0 })
   cashBack: number;
 
-  @OneToMany((type) => Transaction, (transaction) => transaction.ruleset)
-  transactions: Transaction[];
+  @Column({ default: 1})
+  minTransactions: number;
+
+  @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
+  budget: number;
 }

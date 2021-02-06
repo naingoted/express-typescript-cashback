@@ -20,7 +20,7 @@ module.exports = {
     process.env.NODE_ENV === "test"
       ? process.env.TEST_DB_NAME
       : process.env.DB_NAME,
-  synchronize: false,
+  synchronize: true,
   logging: false,
   dropSchema: process.env.NODE_ENV === "test" ? true : false,
   entities: [  process.env.NODE_ENV === "test" ? __dirname + '/src/entities/*.ts' : __dirname + '/dist/entities/*.js',

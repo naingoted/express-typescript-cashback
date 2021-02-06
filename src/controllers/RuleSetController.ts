@@ -21,8 +21,10 @@ export class RuleSetController {
       // "redemptionLimit": 10
       rule.startDate = req.body.startDate;
       rule.endDate = req.body.endDate;
-      rule.cashBack = req.body.cashback;
-      rule.redemptionLimit = req.body.redemptionLimit;
+      rule.cashBack = req.body.cashback || req.body.amount;
+      rule.redemptionLimit = req.body.redemptionLimit || 100;
+      rule.minTransactions = req.body.minTransactions;
+      rule.budget = req.body.budget;
       rule = await ruleSetService.insert(rule);
       res.status(HttpStatus.CREATED).json(ResponseFormat.success(rule));
     }
