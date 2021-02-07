@@ -28,7 +28,7 @@ export function registerRuleSetValidations() {
       startDate: Joi.date().required(),
       endDate: Joi.date().required(),
       budget: Joi.number().required(),
-      cashback: Joi.number().required()
+      cashback: Joi.number().required(),
     });
     await schema
       .validateAsync({

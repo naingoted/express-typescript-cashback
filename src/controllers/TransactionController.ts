@@ -3,6 +3,7 @@ import * as HttpStatus from "http-status-codes";
 import asyncWrapper from "async-wrapper-express-ts";
 
 // Import Services
+import { getManager } from "typeorm";
 import { Transaction } from "../entities/Transaction";
 import { TransactionService } from "../services/TransactionService";
 import { RuleSetService } from "../services/RuleSetService";
@@ -15,17 +16,17 @@ export class TransactionController {
       const transactionService = new TransactionService();
       const ruleSetService = new RuleSetService();
       let transaction = new Transaction();
-      if (!req.body.date) {
-        next({ message: "date field is required" });
-      }
-      if (!req.body.customerId) {
-        next({ message: "customerId field is required" });
-      }
       transaction.date = req.body.date;
       transaction.customerId = req.body.customerId;
       transaction.transactionId = req.body.id;
-      const ruleSet = await ruleSetService.isValidTransaction(req.body.date);
+
+      // to check if remdemptionLimit and budget should be deducted
       let deducted = false;
+      const hasTid = await transactionService.hasTid(req.body.id);
+      if (hasTid) {
+        next({ message: "duplicate id" });
+      }
+      const ruleSet = await ruleSetService.isValidTransaction(req.body.date);
       if (ruleSet) {
         // if transaction is valid
         // get highest ruleset.cashBack, get minTransaction
@@ -34,6 +35,10 @@ export class TransactionController {
           // insert ruleset.cashBack -> transaction.cashback
           deducted = await ruleSetService.canRewardCashback(id);
           if (deducted) {
+            // todo
+            // typeorm transaction wrapper
+            // rollback if one of the db operations failed
+            // release if all succeeded
             // insert cashBack
             transaction.cashBack = cashBack;
             transaction = await transactionService.insert(transaction);
@@ -74,7 +79,11 @@ export class TransactionController {
           .status(HttpStatus.CREATED)
           .json(ResponseFormat.success(transaction));
       } else {
-        next({ message: "invalid transaction" });
+        // all transactions must be recorded.
+        transaction = await transactionService.insert(transaction);
+        res
+          .status(HttpStatus.CREATED)
+          .json(ResponseFormat.success(transaction));
       }
     }
   );

@@ -42,12 +42,14 @@ export class RuleSetService {
    *
    * can reward cashback
    */
-  async canRewardCashback(id: string | number ): Promise<boolean> {
+  async canRewardCashback(id: string | number): Promise<boolean> {
     const rule = await this.ruleSetRepository.findOne(id);
     if (
       rule.redemptionLimit > rule.redemption &&
       Number(rule.budget) > Number(rule.cashBack)
-    ) { return true; }
+    ) {
+      return true;
+    }
     return false;
   }
   /**
@@ -55,15 +57,15 @@ export class RuleSetService {
    */
   async rewardCashback(id: string | number): Promise<object> {
     if (id) {
-        try {
-          const rule = await this.ruleSetRepository.findOne(id);
-          return await this.ruleSetRepository.update(id, {
-            redemption: rule.redemption + 1,
-            budget: Number(rule.budget) - Number(rule.cashBack),
-          });
-        } catch (error) {
-          return Promise.reject(error);
-        }
+      try {
+        const rule = await this.ruleSetRepository.findOne(id);
+        return await this.ruleSetRepository.update(id, {
+          redemption: rule.redemption + 1,
+          budget: Number(rule.budget) - Number(rule.cashBack),
+        });
+      } catch (error) {
+        return Promise.reject(error);
+      }
     }
     return Promise.reject(false);
   }

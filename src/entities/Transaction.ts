@@ -8,7 +8,7 @@ export class Transaction {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ nullable: false})
+  @Column({ nullable: false })
   transactionId: number;
 
   @Column({ nullable: false, type: "date" })

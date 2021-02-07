@@ -13,7 +13,7 @@
 - npm install && npm run dev will sync database tables
   
 ## Api Routes
-
+- http://localhost:8000/api-docs - swagger
 - http://localhost:8000/api/ruleset
 - http://localhost:8000/api/transaction
 - http://localhost:8000/api/cashback

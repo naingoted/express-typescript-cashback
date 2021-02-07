@@ -23,7 +23,7 @@ export class RuleSet {
   @Column({ type: "decimal", precision: 5, scale: 2, default: 0 })
   cashBack: number;
 
-  @Column({ default: 1})
+  @Column({ default: 1 })
   minTransactions: number;
 
   @Column({ type: "decimal", precision: 10, scale: 2, default: 0 })
