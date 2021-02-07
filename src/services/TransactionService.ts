@@ -69,14 +69,14 @@ export class TransactionService {
   // async hasTid(id: number) : Promise<Transaction[]> {
   //   return await this.transactionRepository.find({ where: { transactionId: id }})
   // }
-  async hasTid(id: number) : Promise<boolean> {
+  async hasTid(id: number): Promise<boolean> {
     const isExistsQuery = (query: string) => `SELECT EXISTS(${query}) AS "exists"`;
     const [{ exists }] = await this.transactionRepository.query(isExistsQuery(
       this.transactionRepository.createQueryBuilder("transaction")
-        .andWhere('transaction.transactionId = ? ', {id} )
+        .andWhere("transaction.transactionId = ? ", {id} )
         .getQuery(),
-    ),[id]);
-    if(exists === "1") return true;
+    ), [id]);
+    if (exists === "1") return true;
     return false;
   }
   /**
